@@ -1,0 +1,11 @@
+global:
+  domain: 
+  ssh_key: ~/.ssh/authorized_keys
+  ram_limit: 0
+hosts:
+  0.0.0.0:
+    cores: 4
+    ssh_key: 
+  122.132.112.212:
+    cores: 4
+    ssh_key: 
