@@ -1,11 +1,11 @@
 global:
   domain: 
   ssh_key: ~/.ssh/authorized_keys
-  ram_limit: 0
+  ram_limit: 0 #TODO
 hosts:
   0.0.0.0:
     cores: 4
     ssh_key: 
-  122.132.112.212:
+  122.132.112.212: # Skip Bad Hosts
     cores: 4
     ssh_key: 

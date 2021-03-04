@@ -4,7 +4,7 @@ import subprocess
 import multiprocessing
 import yaml
 import argparse
-# import urwid
+import urwid
 import pathlib
 import shlex
 import uuid
@@ -28,6 +28,16 @@ def sendCmd(cmd, wait=True):
     else:
         return None, None
 
+def checkStatus(self, host,ssh_key, domain="", timeout=1):
+    secret = str(uuid.uuid4())
+
+    cmd = f'ssh -i {ssh_key} {host}{domain} -o ConnectTimeout={timeout} echo \'{secret}\''
+    stdout, stderr = sendCmd(cmd)
+
+    status = True if secret in stdout else False
+    return status
+
+
 def chunkIt(seq, num):
     out = [ [] for _ in range(num)]
     for i, el in enumerate(seq):
@@ -46,6 +56,52 @@ def methodsWithDecorator(cls, decoratorName):
 
 def command_dec(func):
     return func
+
+class Monitor:
+
+
+    def __init__(self, config, args):
+        self.config = config
+        self.args = args
+
+        self.mainLoop()
+
+    def mainLoop(self):
+
+        # Set up color scheme
+        palette = [
+            ('background', '', 'black'),
+            ('titlebar', 'dark red', ''),
+            ('refresh button', 'dark green,bold', ''),
+            ('quit button', 'dark red', ''),
+            ('headers', 'white,bold', ''),
+            ('green ', 'light green', 'black'),
+            ('yellow ', 'yellow', 'black'),
+            ('red', 'light red', 'black')]
+
+        header_text = urwid.Text(u' ClusterLab Monitor')
+        header = urwid.AttrMap(header_text, 'titlebar')
+
+        # Create the menu
+        menu = urwid.Text([
+            u'Press (', ('refresh button', u'R'), u') to manually refresh. ',
+            u'Press (', ('quit button', u'Q'), u') to quit.'
+        ])
+
+        # Create the quotes box
+        table_text = urwid.Text(u'Press (R) to init!')
+        table_filler = urwid.Filler(table_text, valign='top', top=1, bottom=1)
+        v_padding = urwid.Padding(table_filler, left=1, right=1)
+        table_box = urwid.LineBox(v_padding)
+
+        # Assemble the widgets
+        layout = urwid.Frame(header=header, body=table_box, footer=menu)
+
+        txt = urwid.Text(f"Hello World {len(palette)}")
+        fill = urwid.Filler(txt, 'top')
+        
+        loop = urwid.MainLoop(fill)
+        loop.run()
 
 class Dispatcher:
     def __init__(self, config, args, valid_hosts):
@@ -108,8 +164,16 @@ class ClusterLab:
 
     @command_dec
     def monitor(self):
-        print("Monitor!")
+        self.monitor_args = self.monitorParser()
+        self.config = yaml.load(open(self.monitor_args.config, 'r'), Loader=yaml.CLoader)
+        self.monitor = Monitor(self.config, self.monitor_args)
 
+    def monitorParser(self):
+        parser = argparse.ArgumentParser(description="Monitor cluster", usage="clab.py monitor [-h] [-c CONFIG] [-e EXP]")
+        parser.add_argument("-c", "--config", type=str, default="config.yaml", required=False, help="config file with hosts")
+        parser.add_argument("-e", "--exp", type=str,
+                            default="cluster1", required=False, help="Exp name")
+        return parser.parse_args(sys.argv[2:])
 
     def dispatchParser(self):
         parser = argparse.ArgumentParser(description="Send tasks to cluster", usage="clab.py dispatch [-h] -i INPUT [-c CONFIG] [-e EXP]")
@@ -129,22 +193,17 @@ class ClusterLab:
 
 
 
-    def checkStatus(self, host, timeout=1):
-        domain = self.config['global']['domain'] if self.config['global']['domain'] else ''
-        ssh_key = self.config['hosts'][host]['ssh_key'] if self.config['hosts'][host]['ssh_key'] else self.config['global']['ssh_key']
-        secret = str(uuid.uuid4())
 
-        cmd = f'ssh -i {ssh_key} {host}{domain} -o ConnectTimeout={timeout} echo \'{secret}\''
-        stdout, stderr = sendCmd(cmd)
-
-        status = True if secret in stdout else False
-        return status
 
     def validateHosts(self):
         valid_hosts = []
         for host in self.config['hosts']:
             print(f'Checking {host:<15}...', end='')
-            stat = self.checkStatus(host)
+
+            domain = self.config['global']['domain'] if self.config['global']['domain'] else ''
+            ssh_key = self.config['hosts'][host]['ssh_key'] if self.config['hosts'][host]['ssh_key'] else self.config['global']['ssh_key']
+            stat = self.checkStatus(host, ssh_key, domain)
+
             if stat:
                 print(Fore.GREEN + "[ONLINE]")
                 valid_hosts.append(host)
