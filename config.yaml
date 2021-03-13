@@ -1,11 +1,10 @@
 global:
   domain: 
-  ssh_key: ~/.ssh/authorized_keys
+  user: 'cadar'
+  ssh_key: ~/.ssh/id_rsa.pub
   ram_limit: 0 #TODO
 hosts:
-  0.0.0.0:
+  localhost:
     cores: 4
-    ssh_key: 
   122.132.112.212: # Skip Bad Hosts
     cores: 4
-    ssh_key: 

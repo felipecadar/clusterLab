@@ -19,8 +19,11 @@ def worker(cmd):
     stdout, stderr = p.communicate()
     stdout = stdout.decode("utf-8").strip()
     stderr = stderr.decode("utf-8").strip()
+    current = multiprocessing.current_process()
+
     lock.acquire()
     print("---------start-process----------")
+    print(current._identity)
     print("STDOUT:\n")
     print(stdout)
     print("STDERR:\n")
