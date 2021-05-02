@@ -18,7 +18,7 @@ python3 clab.py monitor --config config_lab.yaml
 # Sending Comands Hosts
 
 ```bash
-python3 clab.py dispatch -i testargs.txt
+python3 clab.py dispatch -i testargs.txt --config config_test.yaml
 ```
 
 **Expected Log: `clab.log`**
