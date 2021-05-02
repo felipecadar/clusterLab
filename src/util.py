@@ -40,34 +40,30 @@ def sendToHost(user, host, ssh_key, cmd, domain=""):
     else:
         dot = ""
 
-    cmd = f'ssh {host}{dot}{domain} {cmd} '
+    cmd = 'ssh {}{}{} {} '.format(host, dot, domain, cmd)
     # print(cmd)
     stdout, stderr = sendCmd(cmd)
     return stdout, stderr
 
 def checkStatus(user, host, ssh_key, domain="", timeout=1):
     secret = str(uuid.uuid4())
+    if len(domain) > 0:
+        dot = "."
+    else:
+        dot = ""
 
-    cmd = f'ssh {user}"@"{host}"."{domain} -i {ssh_key} -o ConnectTimeout={timeout} echo \'{secret}\''
+    # cmd = 'ssh {user}"@"{host}"."{domain} -i {ssh_key} -o ConnectTimeout={timeout} echo \'{secret}\''
+    cmd = 'ssh {}"@"{}{}{} -i {} -o ConnectTimeout={} echo \'{}\''.format(user, host, dot, domain, ssh_key, timeout, secret)
     stdout, stderr = sendCmd(cmd)
 
     status = True if secret in stdout else False
     return status
-
-def checkStatusTmux(user, host, ssh_key, domain="", timeout=1):
-    cmd = f'ssh {user}"@"{host}"."{domain} -i {ssh_key} -o ConnectTimeout={timeout} tmux ls'
-    stdout, stderr = sendCmd(cmd)
-
-    status = True if secret in stdout else False
-    return status
-
 
 def chunkIt(seq, num):
     out = [ [] for _ in range(num)]
     for i, el in enumerate(seq):
         out[i%num].append(el)
     return out
-
 
 def methodsWithDecorator(cls, decoratorName):
     sourcelines = inspect.getsourcelines(cls)[0]
@@ -80,7 +76,6 @@ def methodsWithDecorator(cls, decoratorName):
 
 def command_dec(func):
     return func
-
 
 def resetTerminal():
     print(chr(27) + "[2J")

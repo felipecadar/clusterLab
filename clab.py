@@ -61,7 +61,7 @@ class ClusterLab:
     def validateHosts(self):
         valid_hosts = []
         for host in self.config['hosts']:
-            print(f'Checking {host:<15}...', end='')
+            print('Checking {:<15}...'.format(host), end='')
 
             domain = self.config['global']['domain'] if self.config['global']['domain'] else ''
             ssh_key = self.config['global']['ssh_key']
