@@ -2,6 +2,7 @@ from src.util import *
 from src.monitor import Monitor
 from src.dispatcher import Dispatcher
 
+
 class ClusterLab:
     def __init__(self, check_hosts=True):
         self.commands = list(methodsWithDecorator(ClusterLab, "command_dec"))
@@ -13,7 +14,7 @@ class ClusterLab:
     @command_dec
     def dispatch(self):
         self.dispatch_args = self.dispatchParser()
-        self.config = yaml.load(open(self.dispatch_args.config, 'r'), Loader=yaml.CLoader)
+        self.config = yaml.load(open(self.dispatch_args.config, 'r'), Loader=Loader)
         self.valid_hosts = [host for host in self.config['hosts']]
         if self.check_hosts:
             self.valid_hosts = self.validateHosts()
@@ -28,7 +29,7 @@ class ClusterLab:
     @command_dec
     def monitor(self):
         self.monitor_args = self.monitorParser()
-        self.config = yaml.load(open(self.monitor_args.config, 'r'), Loader=yaml.CLoader)
+        self.config = yaml.load(open(self.monitor_args.config, 'r'), Loader=Loader)
         self.monitor = Monitor(self.config, self.monitor_args)
 
     def monitorParser(self):

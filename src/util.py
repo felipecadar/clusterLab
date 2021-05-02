@@ -3,7 +3,15 @@ import sys
 import subprocess
 import multiprocessing
 import threading
-import yaml
+
+try:
+    import yaml
+    from yaml import CLoader as Loader, CDumper as Dumper
+except ImportError:
+    import yaml
+    from yaml import Loader, Dumper
+
+
 import argparse
 import pathlib
 import shlex
