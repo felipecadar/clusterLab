@@ -4,6 +4,7 @@ Cluster Framework to abuse the machines on my lab
 # Configure
 1. Install Requirements: `pip3 install -r requirements.txt`
 2. Setup SSH Keys: [https://www.digitalocean.com/community/tutorials/how-to-set-up-ssh-keys-2](https://www.digitalocean.com/community/tutorials/how-to-set-up-ssh-keys-2)
+3. Complete configuration file: Example [config_lab.yaml](config_lab.yaml)
 
 
 # Monitoring Hosts
