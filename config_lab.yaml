@@ -1,6 +1,6 @@
 global:
   domain: "verlab.dcc.ufmg.br"
-  user: "cadar"
+  user: <user>
   ssh_key: "~/.ssh/id_rsa.pub"
   ram_limit: 0 #TODO
 hosts:
