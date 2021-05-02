@@ -61,7 +61,8 @@ def checkStatus(user, host, ssh_key, domain="", timeout=1):
         dot = ""
 
     # cmd = 'ssh {user}"@"{host}"."{domain} -i {ssh_key} -o ConnectTimeout={timeout} echo \'{secret}\''
-    cmd = 'ssh {}"@"{}{}{} -i {} -o ConnectTimeout={} echo \'{}\''.format(user, host, dot, domain, ssh_key, timeout, secret)
+    # cmd = 'ssh {}"@"{}{}{} -i {} -o ConnectTimeout={} echo \'{}\''.format(user, host, dot, domain, ssh_key, timeout, secret)
+    cmd = 'ssh {}"@"{}{}{} -o ConnectTimeout={} echo \'{}\''.format(user, host, dot, domain, timeout, secret)
     stdout, stderr = sendCmd(cmd)
 
     status = True if secret in stdout else False
