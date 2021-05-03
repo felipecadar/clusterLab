@@ -1,5 +1,6 @@
 # clusterLab
-Cluster Framework to abuse the machines on my lab 
+~~Cluster Framework to abuse the machines on my lab~~
+With great power comes great responsibility
 
 # Configure
 1. Install Requirements: `pip3 install -r requirements.txt`
