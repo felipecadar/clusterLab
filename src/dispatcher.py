@@ -1,10 +1,30 @@
 from src.util import *
 from threading import Thread
+from time import sleep
 
 from queue import Queue, Empty
 
 import logging
 # logging.basicConfig(filename='clab.log', format='%(asctime)s %(message)s --> ',datefmt='%d/%m/%Y %I:%M:%S %p',  filemode='w', level=logging.DEBUG)
+
+def MonitoringThread(in_queue, valid_hosts):
+    init = datetime.now()
+    init_time = init.strftime("%H:%M:%S")
+    while True:
+        if in_queue.empty():
+            break
+
+        resetTerminal()
+        now = datetime.now()
+        current_time = now.strftime("%H:%M:%S")
+
+        print("Running Comands from " + init_time + " to "  + current_time)
+        print("Used Hosts: "+ ",".join(valid_hosts))
+        print("Comands in Queues: {}".format(in_queue.qsize()))
+        sleep(1)
+
+    print(Fore.GREEN + "Done")
+
 
 def Master(config, host, in_queue, kill_queue):
     out_queue = Queue()
@@ -18,11 +38,12 @@ def Master(config, host, in_queue, kill_queue):
 
     while True:
 
+
         if out_queue.empty():
             try:
                 cmd = in_queue.get(timeout=1)
                 out_queue.put(cmd)
-            except:
+            except Empty:
 
                 if in_queue.empty():
                     kill_queue.put(1)
@@ -72,6 +93,9 @@ class Dispatcher:
         for cmd in self.all_cmds:
             in_queue.put(cmd)
 
+        M_th = Thread(target=MonitoringThread, args=(in_queue,self.valid_hosts))
+        M_th.start()
+        
         for host in self.valid_hosts:
             th = Thread(target=Master, args=(self.config, host, in_queue, self.kill_queue))
             th.start()

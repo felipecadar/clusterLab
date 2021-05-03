@@ -22,6 +22,7 @@ from colorama import Fore, Back, Style
 from datetime import datetime
 
 import logging
+# logging.basicConfig(format='%(asctime)s --> %(message)s ',datefmt='%d/%m/%Y %I:%M:%S %p',  filemode='w', level=logging.DEBUG)
 logging.basicConfig(filename='clab.log', format='%(asctime)s --> %(message)s ',datefmt='%d/%m/%Y %I:%M:%S %p',  filemode='w', level=logging.DEBUG)
 
 
