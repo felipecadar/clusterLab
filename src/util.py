@@ -3,7 +3,7 @@ import sys
 import subprocess
 import multiprocessing
 import threading
-
+import getpass
 try:
     import yaml
     from yaml import CLoader as Loader, CDumper as Dumper
@@ -49,7 +49,10 @@ def sendToHost(user, host, ssh_key, cmd, domain=""):
     else:
         dot = ""
 
-    cmd = 'ssh {}{}{} {} '.format(host, dot, domain, cmd)
+    if user == "$USER":  
+        user = getpass.getuser()
+
+    cmd = 'ssh {}@{}{}{} {} '.format(user, host, dot, domain, cmd)
     # print(cmd)
     stdout, stderr = sendCmd(cmd)
     return stdout, stderr
@@ -60,6 +63,9 @@ def checkStatus(user, host, ssh_key, domain="", timeout=1):
         dot = "."
     else:
         dot = ""
+
+    if user == "$USER":  
+        user = getpass.getuser()
 
     # cmd = 'ssh {user}"@"{host}"."{domain} -i {ssh_key} -o ConnectTimeout={timeout} echo \'{secret}\''
     # cmd = 'ssh {}"@"{}{}{} -i {} -o ConnectTimeout={} echo \'{}\''.format(user, host, dot, domain, ssh_key, timeout, secret)
